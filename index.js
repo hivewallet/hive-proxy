@@ -1,6 +1,7 @@
 var express = require("express");
 var request = require('request')
 var app = express();
+var bodyParser = require('body-parser')
 
 function allowCrossDomain(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
@@ -11,28 +12,22 @@ function allowCrossDomain(req, res, next) {
 }
 
 app.use(allowCrossDomain)
-app.use(express.urlencoded())
+app.use(bodyParser.json())
 
-app.get('/*', function(req, res){
-  var url = "https://blockchain.info" + req.url
-  console.log(url)
-  request.get({
-    url: url
-  }, function (error, response, body) {
+app.post('/', function(req, res){
+  console.log(req.query.url)
+  console.log(req.body.hex)
+
+  request({
+    method: 'POST',
+    uri: req.query.url,
+    body: JSON.stringify({hex: req.body.hex})
+  }, function(err, response, body){
     console.log(response.statusCode)
+    console.log(body)
     res.statusCode = response.statusCode
     res.send(body);
-  });
-});
-
-app.post('/pushtx', function(req, res){
-  var url = "https://blockchain.info" + req.url
-  console.log(url)
-  request.post(url, function(error, response, body){
-    console.log(response.statusCode)
-    res.statusCode = response.statusCode
-    res.send(body);
-  }).form({tx: req.body.tx})
+  })
 });
 
 app.listen(process.env.PORT || 9009);
