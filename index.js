@@ -1,7 +1,9 @@
 var express = require("express")
 var request = require('request')
-var app = express();
+var morgan  = require('morgan')
 var bodyParser = require('body-parser')
+
+var app = express()
 
 function allowCrossDomain(req, res, next) {
   res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGINS)
@@ -11,20 +13,17 @@ function allowCrossDomain(req, res, next) {
   next()
 }
 
+app.use(morgan())
 app.use(allowCrossDomain)
 app.use(bodyParser.json())
 
 app.post('/', function(req, res){
-  console.log(req.query.url)
-  console.log(req.body.hex)
-
   request({
     method: 'POST',
     uri: req.query.url,
-    body: JSON.stringify({hex: req.body.hex})
+    body: JSON.stringify({hex: req.body.hex}),
+    header: { "Content-Type": "application/json" }
   }, function(err, response, body){
-    console.log(response.statusCode)
-    console.log(body)
     res.statusCode = response.statusCode
     res.send(body);
   })

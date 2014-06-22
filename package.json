@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "~4.4.4",
-    "request": "^2.34.0"
+    "request": "^2.34.0",
+    "morgan": "~1.1.1"
   }
 }
