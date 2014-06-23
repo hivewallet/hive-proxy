@@ -7,7 +7,7 @@ var app = express()
 
 function allowCrossDomain(req, res, next) {
   res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGINS)
-  res.header('Access-Control-Allow-Methods', 'POST')
+  res.header('Access-Control-Allow-Methods', 'POST, GET')
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
 
   next()
@@ -23,6 +23,16 @@ app.post('/', function(req, res){
     uri: req.query.url,
     body: JSON.stringify({hex: req.body.hex}),
     header: { "Content-Type": "application/json" }
+  }, function(err, response, body){
+    res.statusCode = response.statusCode
+    res.send(body);
+  })
+});
+
+app.get('/', function(req, res){
+  request({
+    method: 'GET',
+    uri: req.query.url
   }, function(err, response, body){
     res.statusCode = response.statusCode
     res.send(body);
