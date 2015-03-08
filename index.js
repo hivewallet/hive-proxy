@@ -16,6 +16,7 @@ function allowCrossDomain(req, res, next) {
 app.use(morgan())
 app.use(allowCrossDomain)
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded())
 
 app.post('/', function(req, res){
   request({
