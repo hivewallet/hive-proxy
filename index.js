@@ -4,6 +4,7 @@ var morgan  = require('morgan')
 var bodyParser = require('body-parser')
 
 var app = express()
+var TX_URI = new RegExp("^https://btc.blockr.io/api/v1/tx/raw/")
 
 function allowCrossDomain(req, res, next) {
   res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGINS)
@@ -36,8 +37,34 @@ app.get('/', function(req, res){
     uri: req.query.url
   }, function(err, response, body){
     res.statusCode = response.statusCode
+    if ((res.statusCode === 200 || res.statusCode === 304) &&
+        TX_URI.test(req.query.url)) {
+      body = stripTransactionData(body)
+    }
     res.send(body);
   })
 });
+
+function stripTransactionData(body) {
+  var response = JSON.parse(body)
+  var stripped = {
+    status: response.status,
+    data: []
+  }
+
+  stripped.data = response.data.map(function(d) {
+    return {
+      tx: {
+        hex: d.tx.hex,
+        blockhash: d.tx.blockhash,
+        blockHeight: d.tx.blockHeight,
+        blocktime: d.tx.blocktime,
+        confirmations: d.tx.confirmations
+      }
+    }
+  })
+
+  return JSON.stringify(stripped)
+}
 
 app.listen(process.env.PORT || 9009);
