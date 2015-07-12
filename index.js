@@ -2,6 +2,7 @@ var express = require("express")
 var request = require('request')
 var morgan  = require('morgan')
 var bodyParser = require('body-parser')
+var compression = require('compression')
 
 var app = express()
 var TX_URI = new RegExp("^https://btc.blockr.io/api/v1/tx/raw/")
@@ -18,6 +19,7 @@ app.use(morgan())
 app.use(allowCrossDomain)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded())
+app.use(compression())
 
 app.post('/', function(req, res){
   request({
