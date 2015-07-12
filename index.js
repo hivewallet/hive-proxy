@@ -39,8 +39,9 @@ app.get('/', function(req, res){
     uri: req.query.url
   }, function(err, response, body){
     res.statusCode = response.statusCode
-    if ((res.statusCode === 200 || res.statusCode === 304) &&
-        TX_URI.test(req.query.url)) {
+
+    // express strips out body for 304
+    if (res.statusCode === 200 && TX_URI.test(req.query.url)) {
       body = stripTransactionData(body)
     }
     res.send(body);
