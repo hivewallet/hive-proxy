@@ -9,3 +9,4 @@ It has evolved to strip away unused data specifically for the /tx/raw/ endpoint 
     cd hive-proxy
     npm install
     CORS_ORIGINS=* npm start
+    open http://localhost:9009
